@@ -1,0 +1,7 @@
+package be_study.quiz.quiz37.quiz03;
+
+class DanceRobot extends Robot {
+	void dance() {
+		System.out.println("춤을 춥니다.");
+	}
+}
