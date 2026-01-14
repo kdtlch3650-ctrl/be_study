@@ -8,156 +8,124 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-//DAO (Date Access Object) 데이터 접속 오브젝트
+//DAO   (Data Access Object)
 public class DeptDAO {
-	// 외부 클래스 Dept를 만들어 deptno 데이터 찾아 테이블 리턴하기
-	public static Dept findDeptByDeptno(int deptno) {
-		
+
+	// 필드변수화 ? -> 동시사용시 문제 발생할수 있음.
+//	Connection conn;
+//	PreparedStatement psmt;
+//	ResultSet rs;
+
+	public Dept findDeptByDeptno(int deptno) {
 
 		Connection conn = null; // db 연결
 		PreparedStatement psmt = null; // db연결하여 sql 명령 실행해주는 객체
-		ResultSet rs = null;// sql 실행 후 select 결과를 저장하는 객체
-		
+		ResultSet rs = null; // sql 실행 후 select 결과를 저장하는 객체
+
 		conn = DBConnectionManager.connectDB();
 
-		// 미리 new Dept로 만들면 없는데이터가 아니라 DEFAULT값을 가진 테이블이 생성되어
-		// 예기치 않은 오류나 실수를 범할 수 있으므로 확실하게 null로 생성
 		Dept dept = null;
 
-		// 실행 쿼리 준비 (불러올 테이블)
+		// 실행 쿼리 준비
 		String sqlQuery = " select * from dept where deptno = ? ";
-		// 왼쪽 부터 ? 번호를 매김 그후 파라미터 세팅에서
-		// 위치 채움 psmt.setInt(1, deptno);
 
 		// 쿼리 실행 후 후속 데이터 처리
 		try {
-			psmt = conn.prepareStatement(sqlQuery); // 실행 준비 / 데이터
 
-			// 파라미터 세팅 ( 쿼리에 있는 ? 위치 채우기)
+			psmt = conn.prepareStatement(sqlQuery);
+
+			// 파라미터 세팅 (쿼리에 있는 ? 위치 채우기)
 			psmt.setInt(1, deptno);
 
-			rs = psmt.executeQuery(); // 쿼리 실행
+			rs = psmt.executeQuery();
 
-			if (rs.next()) { // 다음에 읽어올 데이터가 있는가? true : 다음 데이터가 있다.
-				// 키로 매개변수를 받아 사용하기에 데이터가 여려개 있을 수 없음
-				// while이 아닌 if문으로 있는지만 체크
+			// 조회 결과가 1개 행만 나오는 상황
+			if (rs.next()) { // 다음에 읽어올 데이터가 있는가? true 다음 데이터가 있다.
+				// 데이터가 있다
 				dept = new Dept();
 
 				dept.setDeptno(rs.getInt("deptno"));
 				dept.setDname(rs.getString("dname"));
 				dept.setLoc(rs.getString("loc"));
-
 			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		// DB 연결 종료
-		try {
-			if (rs != null) {
-				rs.close(); // Null인 객체를 대상으로 close() 메소드를 호출하면 -> NullPointException
-			}
-			if (psmt != null) {
-				psmt.close();
-			}
-			if (conn != null) {
-				conn.close();
-			}
+			// if 가 거짓이면 데이터가 없다...
 
 		} catch (SQLException e) {
 			e.printStackTrace();
+		} finally {
+			DBConnectionManager.disconnectDB(conn, psmt, rs);
 		}
 
 		return dept;
 	}
 
-	// 외부 클래스 Dept를 만들어 dname 데이터 찾아 테이블 리턴하기
-	public static Dept findDeptByDname(String dname) {
-		
+	public Dept findDeptByDname(String dname) {
 
 		Connection conn = null; // db 연결
 		PreparedStatement psmt = null; // db연결하여 sql 명령 실행해주는 객체
-		ResultSet rs = null;// sql 실행 후 select 결과를 저장하는 객체
+		ResultSet rs = null; // sql 실행 후 select 결과를 저장하는 객체
 
-		// DB 연결
 		conn = DBConnectionManager.connectDB();
 
 		Dept dept = null;
 
-		// 실행 쿼리 준비 (불러올 테이블)
-		String sqlQuery = " select * from dept where dname = ? ";
-		// 왼쪽 부터 ? 번호를 매김 그후 파라미터 세팅에서
-		// 위치 채움 psmt.setInt(1, deptno);
+		// 실행 쿼리 준비
+		String sqlQuery = " select * from dept where dname = ?  ";
 
 		// 쿼리 실행 후 후속 데이터 처리
 		try {
-			psmt = conn.prepareStatement(sqlQuery); // 실행 준비 / 데이터
 
-			// 파라미터 세팅 ( 쿼리에 있는 ? 위치 채우기)
+			psmt = conn.prepareStatement(sqlQuery);
+
+			// 파라미터 세팅 (쿼리에 있는 ? 위치 채우기)
 			psmt.setString(1, dname);
 
-			rs = psmt.executeQuery(); // 쿼리 실행
+			rs = psmt.executeQuery();
 
-			if (rs.next()) { // 다음에 읽어올 데이터가 있는가? true : 다음 데이터가 있다.
-				// 키로 매개변수를 받아 사용하기에 데이터가 여려개 있을 수 없음
-				// while이 아닌 if문으로 있는지만 체크
+			// 조회 결과가 1개 행만 나오는 상황
+			if (rs.next()) { // 다음에 읽어올 데이터가 있는가? true 다음 데이터가 있다.
+				// 데이터가 있다
 				dept = new Dept();
 
 				dept.setDeptno(rs.getInt("deptno"));
 				dept.setDname(rs.getString("dname"));
 				dept.setLoc(rs.getString("loc"));
-
 			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		// DB 연결 종료
-		try {
-			if (rs != null) {
-				rs.close(); // Null인 객체를 대상으로 close() 메소드를 호출하면 -> NullPointException
-			}
-			if (psmt != null) {
-				psmt.close();
-			}
-			if (conn != null) {
-				conn.close();
-			}
+			// if 가 거짓이면 데이터가 없다...
 
 		} catch (SQLException e) {
 			e.printStackTrace();
+		} finally {
+			DBConnectionManager.disconnectDB(conn, psmt, rs);
 		}
 
 		return dept;
 	}
 
-	// 테이블 전체 불러오기!!
-	public static List<Dept> findDeptList() {
-		
+	public List<Dept> findDeptList() {
+
 		Connection conn = null; // db 연결
 		PreparedStatement psmt = null; // db연결하여 sql 명령 실행해주는 객체
-		ResultSet rs = null;// sql 실행 후 select 결과를 저장하는 객체
+		ResultSet rs = null; // sql 실행 후 select 결과를 저장하는 객체
 
 		conn = DBConnectionManager.connectDB();
 
 		List<Dept> deptList = null;
 
-		// 실행 쿼리 준비 (불러올 테이블)
+		// 실행 쿼리 준비
 		String sqlQuery = " select * from dept ";
-		// 왼쪽 부터 ? 번호를 매김 그후 파라미터 세팅에서
-		// 위치 채움 psmt.setInt(1, deptno);
 
 		// 쿼리 실행 후 후속 데이터 처리
 		try {
-			psmt = conn.prepareStatement(sqlQuery); // 실행 준비 / 데이터
 
-			// 파라미터 세팅 ( 쿼리에 있는 ? 위치 채우기)
-			// psmt.setString(1, dname);
+			psmt = conn.prepareStatement(sqlQuery);
+			rs = psmt.executeQuery();
 
-			rs = psmt.executeQuery(); // 쿼리 실행
+			// 조회 결과가 1개 행만 나오는 상황
+			while (rs.next()) { // 다음에 읽어올 데이터가 있는가? true 다음 데이터가 있다.
+				// 데이터가 있다
 
-			while (rs.next()) { // 다음에 읽어올 데이터가 있는가? true : 다음 데이터가 있다.
-				// 데이터가 있다.
-
-				// dept 조회한 '하나'의 행 데이터
+				// dept 조회 한 행 데이터
 				Dept dept = new Dept();
 				dept.setDeptno(rs.getInt("deptno"));
 				dept.setDname(rs.getString("dname"));
@@ -166,27 +134,138 @@ public class DeptDAO {
 				if (deptList == null) {
 					deptList = new ArrayList<Dept>();
 				}
-				deptList.add(dept); // 최종 리턴 할 dept 목록 list에 한 행 추가
-			} // 반복
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		// DB 연결 종료
-		try {
-			if (rs != null) {
-				rs.close(); // Null인 객체를 대상으로 close() 메소드를 호출하면 -> NullPointException
+				deptList.add(dept); // 최종 return 할 dept목록 list에 추가
 			}
-			if (psmt != null) {
-				psmt.close();
-			}
-			if (conn != null) {
-				conn.close();
-			}
+			// if 가 거짓이면 데이터가 없다...
 
 		} catch (SQLException e) {
 			e.printStackTrace();
+		} finally {
+			DBConnectionManager.disconnectDB(conn, psmt, rs);
 		}
 
 		return deptList;
+	}
+
+	// select -> 실행 -> DB(테이블 조회 정보) -> ResutSet -> 객체변환 (테이블 행s)
+	// insert update delete -> 실행 -> 적용된 행의 갯수(ex.n개의 행이 삽입되었습니다.)
+
+	/**************************************/
+	// 저장 Insert
+	public int saveDept(int deptno, String dname, String loc) {
+		Connection conn = null; // db 연결
+		PreparedStatement psmt = null; // db연결하여 sql 명령 실행해주는 객체
+		ResultSet rs = null; // sql 실행 후 select 결과를 저장하는 객체
+
+		conn = DBConnectionManager.connectDB();
+
+		int result = 0;
+
+		// 실행 쿼리 준비
+		String sqlQuery = " INSERT INTO dept (deptno, dname,loc) VALUES( ?, ?, ?) ";
+
+		// 쿼리 실행 후 후속 데이터 처리
+		try {
+
+			psmt = conn.prepareStatement(sqlQuery);
+
+			// ? 에 데이터 넣기
+			psmt.setInt(1, deptno);
+			psmt.setString(2, dname);
+			psmt.setString(3, loc);
+
+			// rs = psmt.executeQuery(); select 할 때 사용구문
+
+			// insert, update, delete -> 적용된행갯수 반환 -> executeUpdate()
+			result = psmt.executeUpdate();
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			DBConnectionManager.disconnectDB(conn, psmt, rs);
+		}
+
+		return result;
+	}
+
+	// 저장 Insert
+	public int saveDept(Dept dept) {
+		Connection conn = null; // db 연결
+		PreparedStatement psmt = null; // db연결하여 sql 명령 실행해주는 객체
+		ResultSet rs = null; // sql 실행 후 select 결과를 저장하는 객체
+
+		conn = DBConnectionManager.connectDB();
+
+		int result = 0;
+
+		// 실행 쿼리 준비
+		String sqlQuery = " INSERT INTO dept (deptno, dname,loc) VALUES( ?, ?, ?) ";
+
+		// 쿼리 실행 후 후속 데이터 처리
+		try {
+
+			psmt = conn.prepareStatement(sqlQuery);
+
+			// ? 에 데이터 넣기
+			psmt.setInt(1, dept.getDeptno());
+			psmt.setString(2, dept.getDname());
+			psmt.setString(3, dept.getLoc());
+
+			// rs = psmt.executeQuery(); select 할 때 사용구문
+
+			// insert, update, delete -> 적용된행갯수 반환 -> executeUpdate()
+			result = psmt.executeUpdate();
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			DBConnectionManager.disconnectDB(conn, psmt, rs);
+		}
+
+		return result;
+	}
+
+	/**************************************/
+
+	// 삭제
+	public int removeDept(int deptno) { // PK 컬럼임 deptno 값을 기준으로 삭제
+
+		Connection conn = null; // db 연결
+		PreparedStatement psmt = null; // db연결하여 sql 명령 실행해주는 객체
+		ResultSet rs = null; // sql 실행 후 select 결과를 저장하는 객체
+
+		conn = DBConnectionManager.connectDB();
+
+		int result = 0;
+
+		// 실행 쿼리 준비
+		String sqlQuery = " DELETE from dept where deptno = ? ";
+
+		// 쿼리 실행 후 후속 데이터 처리
+		try {
+
+			psmt = conn.prepareStatement(sqlQuery);
+
+			// ? 에 데이터 넣기
+			psmt.setInt(1, deptno);
+
+			// rs = psmt.executeQuery(); select 할 때 사용구문
+
+			// insert, update, delete -> 적용된행갯수 반환 -> executeUpdate()
+			result = psmt.executeUpdate();
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			DBConnectionManager.disconnectDB(conn, psmt, rs);
+		}
+
+		return result;
+	}
+	
+	public int removeDept(Dept dept) { // PK 컬럼임 deptno 값을 기준으로 삭제
+		
+		//객체를 풀어서 deptno 추출 후 removeDept(int deptno)불러 리턴받은 내용을 리턴
+		return removeDept(dept.getDeptno());
 	}
 }
