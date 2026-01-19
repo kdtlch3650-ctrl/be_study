@@ -1,5 +1,6 @@
-package be_study.api.v2;
+package be_study.api.reviwe.v1;
 
+import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -9,54 +10,49 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
-import java.io.BufferedReader;
-import java.io.IOException;
 
+//	1. MidFcstInfoServiceRepository만들어서 붙여오기 (서비스키 json)
+//	public String requestApi_qetMidTa() throws Exception{
+//	return sb.toString(); 반환
+
+//	3. MidTaDTO를 반환하는 getMidta 클래스 만들어서 파싱작업
+
+//	5.파싱 자리에 DTO와 파싱을 연결하는 코드 작성
+
+//	6. 매개변수 넣어주기
 public class MidFcstInfoServiceRepository {
-
-				
-	public String requestApi_getMidTa(String tmFc, String regId) throws Exception {
-		StringBuilder urlBuilder = new StringBuilder(
-				"http://apis.data.go.kr/1360000/MidFcstInfoService/getMidTa"); /* URL */
-		urlBuilder.append("?" + URLEncoder.encode("serviceKey", "UTF-8")
-				+ "=7c4473afce1978b5796fba74c2a7a1868850f0a64afa2269f51e86fc03e18251"); /* Service Key */
-		urlBuilder
-				.append("&" + URLEncoder.encode("pageNo", "UTF-8") + "=" + URLEncoder.encode("1", "UTF-8")); /* 페이지번호 */
-		urlBuilder.append("&" + URLEncoder.encode("numOfRows", "UTF-8") + "="
-				+ URLEncoder.encode("10", "UTF-8")); /* 한 페이지 결과 수 */
-		urlBuilder.append("&" + URLEncoder.encode("dataType", "UTF-8") + "="
-				+ URLEncoder.encode("JSON", "UTF-8")); /* 요청자료형식(XML/JSON)Default: XML */
-		urlBuilder.append("&" + URLEncoder.encode("regId", "UTF-8") + "="
-				+ URLEncoder.encode(regId, "UTF-8")); /* 11B10101 서울, 11B20201 인천 등 ( 별첨엑셀자료 참고) */
-		urlBuilder.append("&" + URLEncoder.encode("tmFc", "UTF-8") + "=" + URLEncoder.encode(tmFc,
-				"UTF-8")); /*-일 2회(06:00,18:00)회 생성 되며 발표시각을 입력- YYYYMMDD0600(1800) 최근 24시간 자료만 제공*/
-//		urlBuilder.append("&" + URLEncoder.encode("regId", "UTF-8") + "="
-//				+ URLEncoder.encode("11B10101", "UTF-8")); /* 11B10101 서울, 11B20201 인천 등 ( 별첨엑셀자료 참고) */
-//		urlBuilder.append("&" + URLEncoder.encode("tmFc", "UTF-8") + "=" + URLEncoder.encode("202601150600",
-//				"UTF-8")); /*-일 2회(06:00,18:00)회 생성 되며 발표시각을 입력- YYYYMMDD0600(1800) 최근 24시간 자료만 제공*/
-		URL url = new URL(urlBuilder.toString());
-		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-		conn.setRequestMethod("GET");
-		conn.setRequestProperty("Content-type", "application/json");
-		System.out.println("Response code: " + conn.getResponseCode());
-		BufferedReader rd;
-		if (conn.getResponseCode() >= 200 && conn.getResponseCode() <= 300) {
-			rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-		} else {
-			rd = new BufferedReader(new InputStreamReader(conn.getErrorStream()));
-		}
-		StringBuilder sb = new StringBuilder();
-		String line;
-		while ((line = rd.readLine()) != null) {
-			sb.append(line);
-		}
-		rd.close();
-		conn.disconnect();
-		System.out.println(sb.toString());
-
-		return sb.toString();
+	public String requestApi_getMidTa(String tmFc, String regId) throws Exception{
+		StringBuilder urlBuilder = new StringBuilder("http://apis.data.go.kr/1360000/MidFcstInfoService/getMidTa"); /*URL*/
+        urlBuilder.append("?" + URLEncoder.encode("serviceKey","UTF-8") + "=7c4473afce1978b5796fba74c2a7a1868850f0a64afa2269f51e86fc03e18251"); /*Service Key*/
+        urlBuilder.append("&" + URLEncoder.encode("pageNo","UTF-8") + "=" + URLEncoder.encode("1", "UTF-8")); /*페이지번호*/
+        urlBuilder.append("&" + URLEncoder.encode("numOfRows","UTF-8") + "=" + URLEncoder.encode("10", "UTF-8")); /*한 페이지 결과 수*/
+        urlBuilder.append("&" + URLEncoder.encode("dataType","UTF-8") + "=" + URLEncoder.encode("json", "UTF-8")); /*요청자료형식(XML/JSON)Default: XML*/
+        urlBuilder.append("&" + URLEncoder.encode("regId","UTF-8") + "=" + URLEncoder.encode(regId, "UTF-8")); /*11B10101 서울, 11B20201 인천 등 ( 별첨엑셀자료 참고)*/
+        urlBuilder.append("&" + URLEncoder.encode("tmFc","UTF-8") + "=" + URLEncoder.encode(tmFc, "UTF-8")); /*-일 2회(06:00,18:00)회 생성 되며 발표시각을 입력- YYYYMMDD0600(1800) 최근 24시간 자료만 제공*/
+        URL url = new URL(urlBuilder.toString());
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        conn.setRequestMethod("GET");
+        conn.setRequestProperty("Content-type", "application/json");
+        System.out.println("Response code: " + conn.getResponseCode());
+        BufferedReader rd;
+        if(conn.getResponseCode() >= 200 && conn.getResponseCode() <= 300) {
+            rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+        } else {
+            rd = new BufferedReader(new InputStreamReader(conn.getErrorStream()));
+        }
+        StringBuilder sb = new StringBuilder();
+        String line;
+        while ((line = rd.readLine()) != null) {
+            sb.append(line);
+        }
+        rd.close();
+        conn.disconnect();
+        System.out.println(sb.toString());
+        
+        return sb.toString();
 	}
-
+	
+//	3. 데이터 받아와 파싱작업
 	public MidTaDTO getMidta(String tmFc, String regId) {
 
 		MidTaDTO midTaDTO = null;
@@ -108,11 +104,18 @@ public class MidFcstInfoServiceRepository {
 			System.out.println(itemObj.get("taMin5"));
 			System.out.println(itemObj.get("taMax5"));
 
-			midTaDTO = new MidTaDTO();
+			
+			
+//			5. 파싱 DTO 연결
+			midTaDTO = new MidTaDTO(); //DTO 객체만들기
+			
 			midTaDTO.setResultCode(header.get("resultCode").toString());
 			midTaDTO.setResultMsg(header.get("resultMsg").toString());
+			
 			midTaDTO.setTmFc(tmFc);
 			midTaDTO.setRegId(itemObj.get("regId").toString());
+			
+			//itemObj.get("taMax5")가 오브젝트 타입이기에 int형으로 변경 후 넣어줌
 			midTaDTO.setTaMin4(Integer.parseInt(itemObj.get("taMin4").toString()));
 			midTaDTO.setTaMax4(Integer.parseInt(itemObj.get("taMax4").toString()));
 			midTaDTO.setTaMin5(Integer.parseInt(itemObj.get("taMin5").toString()));
@@ -124,5 +127,4 @@ public class MidFcstInfoServiceRepository {
 
 		return midTaDTO;
 	}
-
 }
