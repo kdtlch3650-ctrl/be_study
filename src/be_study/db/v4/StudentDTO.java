@@ -1,6 +1,4 @@
-package be_study.quiz.quiz52;
-
-import java.time.LocalDate;
+package be_study.db.v4;
 
 public class StudentDTO {
 	int studno;
@@ -8,20 +6,23 @@ public class StudentDTO {
 	String id;
 	int grade;
 	String jumin;
+
+	// LocalDateTime birthday;
 	String birthday;
-//	LocalDate birthday;
 	String tel;
 	int height;
 	int weight;
-	int deptno1;
-
-//	int deptno2  //int에 null을 넣을 수가 없음
-	Integer deptno2; // Wrapper 클래스 (감싸는 클래스 래퍼 클래스)
-	// Integer
-	// Double
-	// Boolean
-
+	int deptno1; // 기본값 : 0 무조건 숫자다. 무조건 값을 가져야한다.
+	// int deptno2; // 기본값:null, Nullable 값이 Null일수도 있다!
+	Integer deptno2;
+	// Integer -> int 타입의 Wrapper 클래스
 	int profno;
+
+	// Department
+	int deptno;
+	String dname;
+	int part;
+	String build;
 
 	public int getStudno() {
 		return studno;
@@ -66,16 +67,10 @@ public class StudentDTO {
 	public String getBirthday() {
 		return birthday;
 	}
+
 	public void setBirthday(String birthday) {
 		this.birthday = birthday;
 	}
-//	public LocalDate getBirthday() {
-//		return birthday;
-//	}
-//
-//	public void setBirthday(LocalDate birthday) {
-//		this.birthday = birthday;
-//	}
 
 	public String getTel() {
 		return tel;
@@ -127,6 +122,8 @@ public class StudentDTO {
 
 	@Override
 	public String toString() {
+		// birthday를 LocalDateTime 타입으로 한 경우
+		// ConvertDateUtil.convertLocalDateTimeToString(birthday);
 		return "StudentDTO [studno=" + studno + ", name=" + name + ", id=" + id + ", grade=" + grade + ", jumin="
 				+ jumin + ", birthday=" + birthday + ", tel=" + tel + ", height=" + height + ", weight=" + weight
 				+ ", deptno1=" + deptno1 + ", deptno2=" + deptno2 + ", profno=" + profno + "]";

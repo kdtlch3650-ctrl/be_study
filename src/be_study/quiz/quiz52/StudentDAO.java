@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.sql.Types;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -19,7 +20,7 @@ public class StudentDAO {
 		ResultSet rs = null; // sql 실행 후 select 결과를 저장하는 객체
 
 		conn = DBConnectionManager.connectDB();
-		
+
 		List<StudentDTO> studentList = new ArrayList<StudentDTO>();
 
 		// 실행 쿼리 준비
@@ -36,21 +37,21 @@ public class StudentDAO {
 				// 데이터가 있다
 
 				StudentDTO studentDTO = new StudentDTO();
-				
+
 				studentDTO.setStudno(rs.getInt("studno"));
 				studentDTO.setName(rs.getString("name"));
 				studentDTO.setId(rs.getString("id"));
 				studentDTO.setGrade(rs.getInt("grade"));
 				studentDTO.setJumin(rs.getString("jumin"));
-//				studentDTO.setBirthday(rs.getString("birthday"));
-				studentDTO.setBirthday(convertStringToLocalDate(rs.getString("birthday")));
+				studentDTO.setBirthday(rs.getString("birthday"));
+//				studentDTO.setBirthday(convertStringToLocalDate(rs.getString("birthday")));
 				studentDTO.setTel(rs.getString("tel"));
 				studentDTO.setHeight(rs.getInt("height"));
 				studentDTO.setWeight(rs.getInt("weight"));
 				studentDTO.setDeptno1(rs.getInt("deptno1"));
 				studentDTO.setDeptno2(rs.getInt("deptno2"));
 				studentDTO.setProfno(rs.getInt("profno"));
-				
+
 				studentList.add(studentDTO); // 최종 return 할 dept목록 list에 추가
 			}
 			// if 가 거짓이면 데이터가 없다...
@@ -63,7 +64,7 @@ public class StudentDAO {
 
 		return studentList;
 	}
-	
+
 	public List<StudentDTO> findStudentList(int grade) {
 
 		Connection conn = null; // db 연결
@@ -71,7 +72,7 @@ public class StudentDAO {
 		ResultSet rs = null; // sql 실행 후 select 결과를 저장하는 객체
 
 		conn = DBConnectionManager.connectDB();
-		
+
 		List<StudentDTO> studentList = new ArrayList<StudentDTO>();
 
 		// 실행 쿼리 준비
@@ -90,22 +91,21 @@ public class StudentDAO {
 				// 데이터가 있다
 
 				StudentDTO studentDTO = new StudentDTO();
-				
+
 				studentDTO.setStudno(rs.getInt("studno"));
 				studentDTO.setName(rs.getString("name"));
 				studentDTO.setId(rs.getString("id"));
 				studentDTO.setGrade(rs.getInt("grade"));
 				studentDTO.setJumin(rs.getString("jumin"));
-//				studentDTO.setBirthday(rs.getString("birthday"));
-				studentDTO.setBirthday(convertStringToLocalDate(rs.getString("birthday")));
+				studentDTO.setBirthday(rs.getString("birthday"));
+//				studentDTO.setBirthday(convertStringToLocalDate(rs.getString("birthday")));
 				studentDTO.setTel(rs.getString("tel"));
 				studentDTO.setHeight(rs.getInt("height"));
 				studentDTO.setWeight(rs.getInt("weight"));
 				studentDTO.setDeptno1(rs.getInt("deptno1"));
 				studentDTO.setDeptno2(rs.getInt("deptno2"));
 				studentDTO.setProfno(rs.getInt("profno"));
-				
-				
+
 				studentList.add(studentDTO); // 최종 return 할 dept목록 list에 추가
 			}
 			// if 가 거짓이면 데이터가 없다...
@@ -118,11 +118,57 @@ public class StudentDAO {
 
 		return studentList;
 	}
+
 	public static LocalDate convertStringToLocalDate(String str) {
 		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 		LocalDate ld = LocalDate.parse(str, dtf);
 
 		return ld;
 	}
-	
+
+	public int saveStudent(StudentDTO studentDTO) {
+		Connection conn = null; // db 연결
+		PreparedStatement psmt = null; // db연결하여 sql 명령 실행해주는 객체
+		ResultSet rs = null; // sql 실행 후 select 결과를 저장하는 객체
+
+		conn = DBConnectionManager.connectDB();
+
+		int result = 0;
+
+		// 실행 쿼리 준비
+		String sqlQuery = "INSERT INTO student" + " VALUES (?,?,?,?,?, TO_DATE(?,'YYYY-MM-DD'),?,?,?,?,?,?,)";
+		// 쿼리 실행 후 후속 데이터 처리
+		try {
+			psmt = conn.prepareStatement(sqlQuery);
+
+			psmt.setInt(1, studentDTO.getStudno());
+			psmt.setString(2, studentDTO.getName());
+			psmt.setString(3, studentDTO.getId());
+			psmt.setInt(4, studentDTO.getGrade());
+			psmt.setString(5, studentDTO.getJumin());
+
+			psmt.setString(6, studentDTO.getBirthday());
+			psmt.setString(7, studentDTO.getTel());
+			psmt.setInt(8, studentDTO.getHeight());
+			psmt.setInt(9, studentDTO.getWeight());
+			psmt.setInt(10, studentDTO.getDeptno1());
+
+			if (studentDTO.getDeptno2() == null) {
+				psmt.setNull(11, Types.INTEGER); // null세팅
+			} else {
+				psmt.setInt(11, studentDTO.getDeptno2());
+			}
+
+			psmt.setInt(12, studentDTO.getProfno()); // FK
+
+			
+			result = psmt.executeUpdate();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			DBConnectionManager.disconnectDB(conn, psmt, rs);
+		}
+
+		return result;
+	}
 }
