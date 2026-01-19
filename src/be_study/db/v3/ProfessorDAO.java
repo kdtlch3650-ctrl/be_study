@@ -9,14 +9,14 @@ import java.util.List;
 
 public class ProfessorDAO {
 
-	public int saveProfessor(ProfessorDTO professorDTO) {
+	public int saveProfessor(StudentDTO professorDTO) {
 		Connection conn = null; // db 연결
 		PreparedStatement psmt = null; // db연결하여 sql 명령 실행해주는 객체
 		ResultSet rs = null; // sql 실행 후 select 결과를 저장하는 객체
 
 		conn = DBConnectionManager.connectDB();
 
-		List<ProfessorDTO> professorList = new ArrayList<ProfessorDTO>();
+		List<StudentDTO> professorList = new ArrayList<StudentDTO>();
 
 		// 실행 쿼리 준비
 		int result = 0;
@@ -60,7 +60,7 @@ public class ProfessorDAO {
 	}
 	
 	
-	public List<ProfessorDTO> findProfessorList() {
+	public List<StudentDTO> findProfessorList() {
 
 		Connection conn = null; // db 연결
 		PreparedStatement psmt = null; // db연결하여 sql 명령 실행해주는 객체
@@ -68,7 +68,7 @@ public class ProfessorDAO {
 
 		conn = DBConnectionManager.connectDB();
 
-		List<ProfessorDTO> professorList = new ArrayList<ProfessorDTO>();
+		List<StudentDTO> professorList = new ArrayList<StudentDTO>();
 
 		// 실행 쿼리 준비
 		String sqlQuery = " select profno, name, id, TO_CHAR(HIREDATE, 'YYYY-MM-DD') HIREDATE from professor ";
@@ -83,7 +83,7 @@ public class ProfessorDAO {
 			while (rs.next()) { // 다음에 읽어올 데이터가 있는가? true 다음 데이터가 있다.
 				// 데이터가 있다
 
-				ProfessorDTO professor = new ProfessorDTO();
+				StudentDTO professor = new StudentDTO();
 				
 				professor.setProfno(rs.getInt("profno"));
 				professor.setName(rs.getString("name"));

@@ -8,15 +8,15 @@ public class DBSampleMain {
 		// Date 처리
 		
 		ProfessorDAO professorDAO = new ProfessorDAO();
-		List<ProfessorDTO> professorList = professorDAO.findProfessorList();
+		List<StudentDTO> professorList = professorDAO.findProfessorList();
 		
-		for(ProfessorDTO p : professorList) {
+		for(StudentDTO p : professorList) {
 //			System.out.println(p.toString());
 //			String hiredate =ConvertDateUtil.convertLocalDateTimeToString(p.getHiredate())
 			System.out.println(p.getHiredate());
 		}
 		
-		ProfessorDTO pro = new ProfessorDTO();
+		StudentDTO pro = new StudentDTO();
 		
 		pro.setProfno(9991);
 		pro.setName("name");

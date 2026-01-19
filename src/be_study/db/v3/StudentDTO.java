@@ -2,7 +2,7 @@ package be_study.db.v3;
 
 import java.time.LocalDateTime;
 
-public class ProfessorDTO {
+public class StudentDTO {
 	int profno;
 	String name;
 	String id;
